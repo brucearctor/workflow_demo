@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "mygreatexamplecompany.com/retailworkflow";
+
+package retail;
+
+message Order {
+  string name = 1;
+  TrackingInfo tracking_info = 2;
+}
+
+message TrackingInfo {
+  string tracking_info = 1;
+}
+
+message ShippingStatus {
+  string shipping_status = 1;
+}
+
+ service YourService {
+   rpc Echo(Order.tracking_info) returns (ShippingStatus) {}
+ }

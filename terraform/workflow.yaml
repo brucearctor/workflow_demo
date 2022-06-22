@@ -1,0 +1,70 @@
+main:
+  params: [args]
+  steps:
+    - create_var:
+        assign:
+        - omg: $${args}
+        - project: "affable-context-292903"
+        - topic: "example-topic"
+        - myMap:
+            FirstName: "John"
+            LastName: "Smith"
+            Address:
+              Street: "Flower Road 12"
+              City: "Superville"
+              Country: "Atlantis"
+    - print_args:
+        call: sys.log
+        args:
+            severity: "INFO"
+            text: $${args.name}
+    - print_callback_details_json_to_string:
+        call: sys.log
+        args:
+            severity: "INFO"
+            text: $${json.encode_to_string(args)}
+    - check_payment:
+        call: http.post
+        args:
+          url: ${uri}
+          body:
+            input: "OMG"
+        result: multiply_result
+    - create_callback:
+        call: events.create_callback_endpoint
+        args:
+            http_callback_method: "PUT"
+        result: callback_details
+    - print_callback_details:
+        call: sys.log
+        args:
+            severity: "INFO"
+            text: $${"Listening for callbacks on " + callback_details.url}
+    - another_var:
+        assign:
+        - newMap: 
+            order_details: $${args}
+            callback_url: $${callback_details.url}
+    - await_callback:
+        call: events.await_callback
+        args:
+            callback: $${callback_details}
+            timeout: 3600
+        result: callback_request
+    - print_callback_request:
+        call: sys.log
+        args:
+            severity: "INFO"
+            text: $${"Received " + json.encode_to_string(callback_request.http_request)}
+    - setup_b64_message:
+        assign:
+        - base64Msg: $${base64.encode(json.encode(newMap))}
+    - publish_message_to_topic:
+        call: googleapis.pubsub.v1.projects.topics.publish
+        args:
+          topic: $${"projects/" + project + "/topics/" + topic}
+          body:
+            messages:
+              - data: $${base64Msg}
+    - return_callback_result:
+        return: $${callback_request.http_request}

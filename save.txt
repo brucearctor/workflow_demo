@@ -1,0 +1,21 @@
+https://workflowexecutions.googleapis.com/v1/projects/244283331594/locations/us-central1/workflows/sample-workflow/executions/43c925aa-514a-44c1-a0a4-a9f8f26fd2cb/callbacks/1705791f-d446-4e92-a6d0-a13622422e80_31864a51-8c13-4b03-ad4d-945cdc8d0631
+
+curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(gcloud auth print-access-token)" https://workflowexecutions.googleapis.com/v1/projects/244283331594/locations/us-central1/workflows/sample-workflow/executions/43c925aa-514a-44c1-a0a4-a9f8f26fd2cb/callbacks/1705791f-d446-4e92-a6d0-a13622422e80_31864a51-8c13-4b03-ad4d-945cdc8d0631
+
+https://console.cloud.google.com/functions/details/us-central1/test-function?env=gen2&project=affable-context-292903&tab=testing
+
+curl -m 40 -X POST https://test-function-htyoftei4q-uc.a.run.app \
+-H "Authorization:bearer $(gcloud auth print-identity-token)" \
+-H "Content-Type:application/json" \
+-d '{
+  "name": "Hello World"
+}'
+
+
+curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(gcloud auth print-access-token)" $CALLBACK_URL
+
+
+
+Listening for callbacks on 
+
+curl -X PUT -H "Content-Type: application/json" -d '{"tracking_info": "ABC123"}' -H "Authorization: Bearer $(gcloud auth print-access-token)" https://workflowexecutions.googleapis.com/v1/projects/244283331594/locations/us-central1/workflows/sample-workflow/executions/452ac012-33a6-4d6a-a4d5-08c42d3d7b46/callbacks/0c67275c-7f8b-47fd-a850-cfb76549a7a8_a191802f-741c-4dc8-b3dd-17f171603178
