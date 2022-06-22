@@ -29,12 +29,16 @@ main:
           url: ${uri}
           body:
             input: "OMG"
-        result: multiply_result
+          auth:
+            type: OIDC
+            audience: ${uri}/ChargeCard
+        result: payment_ok
     - create_callback:
         call: events.create_callback_endpoint
         args:
             http_callback_method: "PUT"
         result: callback_details
+    # TODO: SWITCH THIS TO A PUB/SUB PUSH to email ( and/or route somewhere worthwhile ... database, etc )
     - print_callback_details:
         call: sys.log
         args:

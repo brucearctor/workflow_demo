@@ -79,7 +79,7 @@ resource "google_workflows_workflow" "workflow" {
   # per tfstate, and
   # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloudfunctions2_function
   # #IGiveUp ... for now :-)
-  source_contents = templatefile("workflow.yaml", { uri = "https://test.dev" })
+  source_contents = templatefile("workflow.yaml", { uri = google_cloudfunctions2_function.payment_service.service_config[0].uri })
 
   depends_on = [google_project_service.workflows]
 }

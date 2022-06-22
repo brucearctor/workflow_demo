@@ -4,7 +4,7 @@ curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(gclo
 
 https://console.cloud.google.com/functions/details/us-central1/test-function?env=gen2&project=affable-context-292903&tab=testing
 
-curl -m 40 -X POST https://test-function-htyoftei4q-uc.a.run.app \
+curl -m 40 -X POST https://starting-point-htyoftei4q-uc.a.run.app \
 -H "Authorization:bearer $(gcloud auth print-identity-token)" \
 -H "Content-Type:application/json" \
 -d '{
