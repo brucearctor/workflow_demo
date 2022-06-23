@@ -49,9 +49,9 @@ resource "google_cloudfunctions2_function" "starting-point" {
     timeout_seconds       = 30
     service_account_email = google_service_account.account.email
     environment_variables = {
-        GCP_PROJECT = var.project
-        FUNCTION_REGION = var.region
-        WORKFLOW_NAME = google_workflows_workflow.workflow.name
+      GCP_PROJECT     = var.project
+      FUNCTION_REGION = var.region
+      WORKFLOW_NAME   = google_workflows_workflow.workflow.name
     }
   }
 

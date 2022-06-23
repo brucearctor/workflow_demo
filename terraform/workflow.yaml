@@ -4,8 +4,8 @@ main:
     - create_var:
         assign:
         - omg: $${args}
-        - project: "affable-context-292903"
-        - topic: "example-topic"
+        - project: ${project_id}
+        - topic: ${ topic_name }
         - myMap:
             FirstName: "John"
             LastName: "Smith"
@@ -26,7 +26,7 @@ main:
     - check_payment:
         call: http.post
         args:
-          url: ${uri}
+          url: ${uri}/ChargeCard
           body:
             input: "OMG"
           auth:
@@ -60,6 +60,21 @@ main:
         args:
             severity: "INFO"
             text: $${"Received " + json.encode_to_string(callback_request.http_request)}
+    - check_shipping:
+        call: http.post
+        args:
+          url: ${shipping_url}
+          body:
+            input: "OMG"
+          auth:
+            type: OIDC
+            audience: ${shipping_url}
+        result: shipping_response
+    - print_shipping_response:
+        call: sys.log
+        args:
+          severity: "INFO"
+          text: $${"OMGOMGOMG!" + shipping_response.body }
     - setup_b64_message:
         assign:
         - base64Msg: $${base64.encode(json.encode(newMap))}

@@ -10,7 +10,6 @@ import (
 	// for ease including it within this module.
 	pw "examplepaymentservice.com/payment/mygreatexamplecompany.com/retailworkflow"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
-
 )
 
 func init() {
@@ -38,4 +37,3 @@ func chargeCard(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintln(w, string(u))
 }
-

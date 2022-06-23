@@ -1,0 +1,9 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/new-project-354204/shipping', '.']
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/new-project-354204/shipping']
+images:
+  - gcr.io/new-project-354204/shipping

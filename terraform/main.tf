@@ -1,6 +1,20 @@
+terraform {
+  required_version = ">= 1.1"
+
+  required_providers {
+    google      = ">= 4.2"
+    google-beta = ">= 4.2"
+  }
+}
+
+variable "projectnumber" {
+  type    = string
+  default = "662116196692"
+}
+
 variable "project" {
   type    = string
-  default = "affable-context-292903"
+  default = "new-project-354204"
 }
 
 variable "region" {
@@ -37,13 +51,13 @@ resource "google_service_account" "workflows_service_account" {
   display_name = "Sample Workflows Service Account"
 }
 
-resource "google_pubsub_topic" "example" {
-  name = "example-topic"
+resource "google_pubsub_topic" "pubsubtopic" {
+  name = "pubsubtopic"
 }
 
 resource "google_pubsub_subscription" "example" {
   name  = "example-subscription"
-  topic = google_pubsub_topic.example.name
+  topic = google_pubsub_topic.pubsubtopic.name
 
   # 20 minutes
   message_retention_duration = "1200s"
@@ -53,15 +67,16 @@ resource "google_pubsub_subscription" "example" {
 }
 
 resource "google_project_iam_binding" "project" {
-  project = "affable-context-292903"
+  project = var.project
   # EDITOR IS TOO PERMISSIVE.  
   # SUGGEST TO LIMIT PERMISSIONS FURTHER
   role = "roles/editor"
 
-  ##"serviceAccount:${google_service_account.workflows_service_account.account_id}@${var.project}.iam.gserviceaccount.com",
+  # THIS IS TOO MUCH PERMISSION, BUT FOR DEMO [ not even 'test' environment am ok with it]
   members = [
     "serviceAccount:${google_service_account.workflows_service_account.email}",
-    "serviceAccount:${google_service_account.account.email}"
+    "serviceAccount:${google_service_account.account.email}",
+    "serviceAccount:${var.projectnumber}@cloudbuild.gserviceaccount.com"
   ]
   depends_on = [
     google_service_account.workflows_service_account,
@@ -74,12 +89,13 @@ resource "google_workflows_workflow" "workflow" {
   region          = var.region
   description     = "A sample retail workflow"
   service_account = google_service_account.workflows_service_account.id
-  # wanting the var to be something like:  google_cloudfunctions2_function.payment_service.uri
-  # or google_cloudfunctions2_function.payment_service.service_config.uri
-  # per tfstate, and
-  # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloudfunctions2_function
-  # #IGiveUp ... for now :-)
-  source_contents = templatefile("workflow.yaml", { uri = google_cloudfunctions2_function.payment_service.service_config[0].uri })
+  source_contents = templatefile("workflow.yaml", {
+    uri          = google_cloudfunctions2_function.payment_service.service_config[0].uri,
+    shipping_url = google_cloud_run_service.shipping_run_service.status[0].url,
+    project_id   = var.project,
+    topic_name   = google_pubsub_topic.pubsubtopic.name
+    }
+  )
 
   depends_on = [google_project_service.workflows]
 }
